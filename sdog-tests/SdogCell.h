@@ -17,38 +17,30 @@ enum class SdogCellType {
 class SdogCell {
 
 public:
-	SdogCell(const std::string& code, double gridRadius);
-	SdogCell(SdogCellType type, double minLat, double maxLat, double minLong, double maxLong, double minRad, double maxRad);
+	SdogCell() = default;
+	SdogCell(int SL, SdogCellType type, double minLat, double maxLat, double minLong, double maxLong, double minRad, double maxRad);
 
-	bool contains(double latRad, double longRad, double radius);
+	void fullSubdivide(std::vector<SdogCell>& out) const;
+	void minSubdivide(std::vector<SdogCell>& out) const;
 
-	void children(std::vector<std::string>& out);
-	void neighbours(std::vector<std::string>& out);
+	double volume() const;
+	double surfaceArea() const;
+	double sphericity() const;
 
-	double volume();
-	double surfaceArea();
-	double sphericity();
-
-	static std::string codeForPos(double latRad, double longRad, double radius, double gridRadius, unsigned int level);
-	static bool codeIsValid(std::string code);
-
-	std::string getCode() const { return code; }
+	int getSL() const { return SL; }
 	double getMinLat() const { return minLat; }
 	double getMaxLat() const { return maxLat; }
 	double getMinLong() const { return minLong; }
 	double getMaxLong() const { return maxLong; }
 	double getMinRad() const { return minRad; }
 	double getMaxRad() const { return maxRad; }
-	double getGridRad() const { return gridRadius; }
 	SdogCellType getType() const { return type; }
 
 private:
-	std::string code;
-
+	int SL;
 	double minLat, maxLat;
 	double minLong, maxLong;
 	double minRad, maxRad;
-	double gridRadius;
 
 	SdogCellType type;
 };
