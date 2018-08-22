@@ -11,7 +11,7 @@ void Program::start() {
 	
 	clock_t t = clock();
 
-	const int maxSL = 12;
+	const int maxSL = 30;
 
 	double min[maxSL+1]; for (int i = 0; i <= maxSL; i++) min[i] = 10000.0;
 	double max[maxSL+1]; for (int i = 0; i <= maxSL; i++) max[i] = -1.0;
@@ -27,7 +27,7 @@ void Program::start() {
 		if (c.getSL() < maxSL) {
 			c.minSubdivide(queue);
 		}
-		double v = c.sphericity();
+		double v = c.volume();
 
 		int SL = c.getSL();
 		min[SL] = (v < min[SL]) ? v : min[SL];

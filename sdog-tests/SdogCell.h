@@ -18,9 +18,10 @@ class SdogCell {
 
 public:
 	SdogCell() = default;
-	SdogCell(int SL, SdogCellType type, double minLat, double maxLat, double minLong, double maxLong, double minRad, double maxRad);
+	SdogCell(int SL, SdogCellType type, double minLat, double maxLat, double minLong, double maxLong, double minRad, double maxRad, int radState = -1, int latState = -1);
 
 	void fullSubdivide(std::vector<SdogCell>& out) const;
+	void sliceSubdivide(std::vector<SdogCell>& out) const;
 	void minSubdivide(std::vector<SdogCell>& out) const;
 
 	double volume() const;
@@ -41,6 +42,7 @@ private:
 	double minLat, maxLat;
 	double minLong, maxLong;
 	double minRad, maxRad;
+	int radState, latState;
 
 	SdogCellType type;
 };
