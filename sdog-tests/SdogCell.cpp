@@ -24,14 +24,13 @@ SdogCell::SdogCell(int SL, SdogCellType type, double minLat, double maxLat, doub
 
 
 // Performs full standard subdivision
-void SdogCell::fullSubdivide(std::vector<SdogCell>& out) const {
+void SdogCell::fullSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc rad) const {
 
-	double midLat, midLong, midRad;
+	double midLong = 0.5 * maxLong + 0.5 * minLong;
+	double midLat = lat(maxLat, minLat, type);
+	double midRad = rad(maxRad, minRad, type);
 
 	if (type == SdogCellType::NG) {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, minRad, midRad));
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, midRad, maxRad));
@@ -44,9 +43,6 @@ void SdogCell::fullSubdivide(std::vector<SdogCell>& out) const {
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, midLat, maxLat, minLong, midLong, midRad, maxRad));
 	}
 	else if (type == SdogCellType::LG) {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, minRad, midRad));
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, midRad, maxRad));
@@ -57,9 +53,6 @@ void SdogCell::fullSubdivide(std::vector<SdogCell>& out) const {
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, minLong, midLong, midRad, maxRad));
 	}
 	else {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		out.push_back(SdogCell(SL + 1, SdogCellType::SG, minLat, maxLat, minLong, maxLong, minRad, midRad));
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, midRad, maxRad));
@@ -71,14 +64,13 @@ void SdogCell::fullSubdivide(std::vector<SdogCell>& out) const {
 
 
 // Performs subdivision to obtain one slice of longitude - gets full coverage on all cell sizes
-void SdogCell::sliceSubdivide(std::vector<SdogCell>& out) const {
+void SdogCell::sliceSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc rad) const {
 
-	double midLat, midLong, midRad;
+	double midLong = 0.5 * maxLong + 0.5 * minLong;
+	double midLat = lat(maxLat, minLat, type);
+	double midRad = rad(maxRad, minRad, type);
 
 	if (type == SdogCellType::NG) {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, minRad, midRad));
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, midRad, maxRad));
@@ -86,9 +78,6 @@ void SdogCell::sliceSubdivide(std::vector<SdogCell>& out) const {
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, midLat, maxLat, midLong, maxLong, midRad, maxRad));
 	}
 	else if (type == SdogCellType::LG) {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, minRad, midRad));
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, midRad, maxRad));
@@ -96,9 +85,6 @@ void SdogCell::sliceSubdivide(std::vector<SdogCell>& out) const {
 		out.push_back(SdogCell(SL + 1, SdogCellType::LG, midLat, maxLat, minLong, maxLong, midRad, maxRad));
 	}
 	else {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		out.push_back(SdogCell(SL + 1, SdogCellType::SG, minLat, maxLat, minLong, maxLong, minRad, midRad));
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, midRad, maxRad));
@@ -108,14 +94,13 @@ void SdogCell::sliceSubdivide(std::vector<SdogCell>& out) const {
 
 
 // Performs minimum subdivision needed to find minimum and maximum volume cells
-void SdogCell::minSubdivide(std::vector<SdogCell>& out) const {
+void SdogCell::minSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc rad) const {
 
-	double midLat, midLong, midRad;
+	double midLong = 0.5 * maxLong + 0.5 * minLong;
+	double midLat = lat(maxLat, minLat, type);
+	double midRad = rad(maxRad, minRad, type);
 
 	if (type == SdogCellType::NG) {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		if (radState == MAX) {
 			if (latState == MAX) {
@@ -163,9 +148,6 @@ void SdogCell::minSubdivide(std::vector<SdogCell>& out) const {
 		}
 	}
 	else if (type == SdogCellType::LG) {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		if (radState == MAX) {
 			out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, midRad, maxRad, MAX, BOTH));
@@ -186,9 +168,6 @@ void SdogCell::minSubdivide(std::vector<SdogCell>& out) const {
 		}
 	}
 	else {
-		midLat = 0.5 * minLat + 0.5 * maxLat;
-		midLong = 0.5 * minLong + 0.5 * maxLong;
-		midRad = 0.5 * minRad + 0.5 * maxRad;
 
 		out.push_back(SdogCell(SL + 1, SdogCellType::SG, minLat, maxLat, minLong, maxLong, minRad, midRad));
 		out.push_back(SdogCell(SL + 1, SdogCellType::NG, minLat, midLat, midLong, maxLong, midRad, maxRad, BOTH, BOTH));

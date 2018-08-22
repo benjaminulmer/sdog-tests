@@ -2,8 +2,10 @@
 
 #include <glm/glm.hpp>
 
+#include <functional>
 #include <string>
 #include <vector>
+
 
 // Enum for the three different SDOG cell types plus an invalid cell code flag
 enum class SdogCellType {
@@ -13,6 +15,8 @@ enum class SdogCellType {
 	INVALID
 };
 
+typedef std::function<double(double, double, SdogCellType)> splitFunc;
+
 // Class for storing information about an SDOG cell and performing queries
 class SdogCell {
 
@@ -20,9 +24,9 @@ public:
 	SdogCell() = default;
 	SdogCell(int SL, SdogCellType type, double minLat, double maxLat, double minLong, double maxLong, double minRad, double maxRad, int radState = -1, int latState = -1);
 
-	void fullSubdivide(std::vector<SdogCell>& out) const;
-	void sliceSubdivide(std::vector<SdogCell>& out) const;
-	void minSubdivide(std::vector<SdogCell>& out) const;
+	void fullSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc rad) const;
+	void sliceSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc rad) const;
+	void minSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc rad) const;
 
 	double volume() const;
 	double surfaceArea() const;
