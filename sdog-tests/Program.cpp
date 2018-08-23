@@ -12,12 +12,8 @@ void Program::start() {
 	clock_t t = clock();
 
 	const int maxSL = 25;
-
 	double min[maxSL+1]; for (int i = 0; i <= maxSL; i++) min[i] = 10000.0;
 	double max[maxSL+1]; for (int i = 0; i <= maxSL; i++) max[i] = -1.0;
-
-	std::vector<SdogCell> queue;
-	queue.push_back(SdogCell(0, SdogCellType::SG, 0.0, M_PI_2, 0.0, M_PI_2, 0.0, 1.0));
 
 	// Functions
 	auto defFunc = [&](double max, double min, SdogCellType type) {
@@ -48,6 +44,8 @@ void Program::start() {
 	};
 	// End functions
 
+	std::vector<SdogCell> queue;
+	queue.push_back(SdogCell(0, SdogCellType::SG, 0.0, M_PI_2, 0.0, M_PI_2, 0.0, 1.0));
 	while (queue.size() > 0) {
 
 		SdogCell c = queue.back();

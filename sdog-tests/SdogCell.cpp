@@ -176,6 +176,12 @@ void SdogCell::minSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc
 }
 
 
+// Calculates and returns the number of SDOG cells identical to this one in the Octant
+int SdogCell::numSimilarInOct() const {
+	double longRange = abs(maxLong - minLong);
+	return (int)((M_PI_2 / longRange) + 0.5);
+}
+
 // Calculate and return volume of SDOG cell
 double SdogCell::volume() const {
 	return abs((maxLong - minLong) * (maxRad*maxRad*maxRad - minRad*minRad*minRad) * (sin(maxLat) - sin(minLat)) / 3.0);
@@ -189,14 +195,14 @@ double SdogCell::surfaceArea() const {
 
 	// Spherical faces
 	sum += (maxRad*maxRad) * abs((maxLong - minLong) * (sin(maxLat) - sin(minLat)));
-	sum += (maxRad*maxRad) * abs((maxLong - minLong) * (sin(maxLat) - sin(minLat)));
+	sum += (minRad*minRad) * abs((maxLong - minLong) * (sin(maxLat) - sin(minLat)));
 
 	// Planar faces
-	sum += abs(maxLat - minLat) * (maxRad*maxRad - minRad * minRad); // each is divided by two, but two of them
+	sum += abs(maxLat - minLat) * (maxRad*maxRad - minRad*minRad); // each is divided by two, but two of them
 
 	// Conic faces
-	sum += 0.5 * cos(maxLat) * abs(maxLong - minLong) * (maxRad*maxRad - minRad * minRad);
-	sum += 0.5 * cos(minLat) * abs(maxLong - minLong) * (maxRad*maxRad - minRad * minRad);
+	sum += 0.5 * cos(maxLat) * abs(maxLong - minLong) * (maxRad*maxRad - minRad*minRad);
+	sum += 0.5 * cos(minLat) * abs(maxLong - minLong) * (maxRad*maxRad - minRad*minRad);
 
 	return sum;
 }

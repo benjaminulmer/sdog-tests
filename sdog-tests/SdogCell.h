@@ -28,6 +28,7 @@ public:
 	void sliceSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc rad) const;
 	void minSubdivide(std::vector<SdogCell>& out, splitFunc lat, splitFunc rad) const;
 
+	int numSimilarInOct() const;
 	double volume() const;
 	double surfaceArea() const;
 	double sphericity() const;
