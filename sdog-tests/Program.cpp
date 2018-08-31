@@ -3,6 +3,7 @@
 
 #include "SdogCell.h"
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <time.h>
@@ -57,15 +58,37 @@ void Program::start() {
 		max[SL] = (v > max[SL]) ? v : max[SL];
 
 		if (c.getSL() < maxSL) {
-			c.minSubdivide(queue, latVarFunc, radVarFunc);
+			c.minSubdivide(queue, defFunc, defFunc);
 		}
 	}
+	//double r = 0.029429;
+	//for (int i = 4; i <= maxSL; i++) {
+
+	//	double n = pow(2, i);
+
+	//	double x = floor((0.75 - r) * n);
+	//	double y = ceil((0.75 + r) * n);
+
+	//	double rSmallMin = x / n;
+	//	double rSmallMax = (x + 1) / n;
+
+	//	double rBigMin = (y - 1) / n;
+	//	double rBigMax = y / n;
+
+	//	double bigMax = max[i] * (pow(rBigMax, 3) - pow(rBigMin, 3)) / (1 - pow((n - 1) / n, 3));
+	//	double smallMin = min[i] * (pow(rSmallMax, 3) - pow(rSmallMin, 3)) / (pow((n / 2 + 1) / n, 3) - 0.125);
+
+	//	max[i] = bigMax;
+	//	min[i] = smallMin;
+	//}
+
 
 	t = clock() - t;
 
-	for (int i = 0; i <= maxSL; i++) {
-		std::cout << i << ": " << max[i] << " / " << min[i] << " = " << max[i] / min[i] << std::endl;
-	}
+	//for (int i = 0; i <= maxSL; i++) {
+	//	std::cout << max[i] / min[i] << std::endl;
+	//}
+	std::cout << max[20] / min[20] << std::endl;
 
 	std::cout << ((float)t) / CLOCKS_PER_SEC << std::endl;
 	system("pause");
