@@ -42,6 +42,10 @@ public:
 	double getMaxRad() const { return maxRad; }
 	SdogCellType getType() const { return type; }
 
+	static unsigned long long numCells(unsigned long long k) {
+		return (7 * (1 << k) + pow(8, k + 1) + 6) / 21;
+	}
+
 private:
 	int SL;
 	double minLat, maxLat;

@@ -16,12 +16,19 @@ void Program::start() {
 	double bestL = -1.0;
 	double bestS = -1.0;
 
-	//for (double l = 0.01; l < 1.0; l += 0.01) {
-		//for (double s = 0.01; s < 1.0; s += 0.01) {
+	const int maxSL = 10;
+	unsigned long long numCells[maxSL + 1]; for (int i = 0; i <= maxSL; i++) numCells[i] = SdogCell::numCells(i);
+	double meanVol[maxSL + 1]; for (int i = 0; i <= maxSL; i++) meanVol[i] = M_PI / (6.0 * numCells[i]);
 
-			const int maxSL = 25;
+	for (double l = 0.4; l < 0.61; l += 0.01) {
+		for (double s = 0.4; s < 0.61; s += 0.01) {
+
 			double min[maxSL + 1]; for (int i = 0; i <= maxSL; i++) min[i] = 10000.0;
 			double max[maxSL + 1]; for (int i = 0; i <= maxSL; i++) max[i] = -1.0;
+
+			//
+			double SDVol[maxSL + 1]; for (int i = 0; i <= maxSL; i++) SDVol[i] = 0.0;
+			//
 
 			// Functions
 			auto defFunc = [&](double max, double min, SdogCellType type) {
@@ -35,13 +42,14 @@ void Program::start() {
 
 			auto latVarFunc = [&](double max, double min, SdogCellType type) {
 				if (type == SdogCellType::NG) {
-					return asin((sin(max) + sin(min)) / 2.0);
+					return 0.5 * max + 0.5 * min;
+					//return asin((sin(max) + sin(min)) / 2.0);
 				}
 				else if (type == SdogCellType::SG) {
-					return 0.5 * max + (0.5) * min;
+					return s * max + (1.0 - s) * min;
 				}
 				else {
-					return 0.5 * max + (0.5) * min;
+					return l * max + (1.0 - l) * min;
 				}
 			};
 
@@ -64,23 +72,32 @@ void Program::start() {
 
 				double v = c.volume();
 				int SL = c.getSL();
+
+				//
+				int n = c.numSimilarInOct();
+				SDVol[SL] += (v - meanVol[SL]) * (v - meanVol[SL]) * n;
+				//
+
 				min[SL] = (v < min[SL]) ? v : min[SL];
 				max[SL] = (v > max[SL]) ? v : max[SL];
 
 				if (c.getSL() < maxSL) {
-					c.minSubdivide(queue, latVarFunc, radVarFunc);
+					c.sliceSubdivide(queue, latVarFunc, defFunc);
 				}
 			}
-			double ratio = max[20] / min[20];
-			if (ratio < bestRatio) {
+			//double ratio = max[20] / min[20];
+			double ratio = sqrt(SDVol[maxSL] / numCells[maxSL]) / meanVol[maxSL];
+			ratio = max[maxSL] / min[maxSL];
+			if (ratio < 8.769940189) {
 				bestRatio = ratio;
-				//bestS = s;
-				//bestL = l;
+				bestS = s;
+				bestL = l;
+				std::cout << "sg: " << s << "\tlg: " << l << std::endl;
 			}
 
-		//}
+		}
 		//std::cout << l << std::endl;
-	//}
+	}
 	std::cout << "Ratio: " << bestRatio << "\ts: " << bestS << "\tl: " << bestL << std::endl;
 
 	
@@ -114,5 +131,4 @@ void Program::start() {
 	//std::cout << max[20] / min[20] << std::endl;
 
 	std::cout << ((float)t) / CLOCKS_PER_SEC << std::endl;
-	system("pause");
 }
