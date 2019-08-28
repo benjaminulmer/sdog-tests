@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 
 
 enum states {
@@ -181,6 +182,7 @@ int SdogCell::numSimilarInOct() const {
 	double longRange = abs(maxLong - minLong);
 	return (int)((M_PI_2 / longRange) + 0.5);
 }
+
 
 // Calculate and return volume of SDOG cell
 double SdogCell::volume() const {

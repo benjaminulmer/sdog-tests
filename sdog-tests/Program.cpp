@@ -14,7 +14,7 @@ void Program::start() {
 
 	clock_t t = clock();
 
-	const int maxSL = 13;
+	const int maxSL = 15;
 
 	unsigned long long numCells[maxSL + 1]; for (int i = 0; i <= maxSL; i++) numCells[i] = SdogCell::numCells(i);
 
@@ -33,33 +33,22 @@ void Program::start() {
 		return 0.5 * max + 0.5 * min;
 	};
 
-	auto newFunc = [&](double max, double min, SdogCellType type) {
-		if (type == SdogCellType::SG) {
-			return 0.5 * max + 0.5 * min;
+	auto latVolFunc = [&](double max, double min, SdogCellType type) {
+		if (type == SdogCellType::SG || type == SdogCellType::LG) {
+			return asin((3.0/4.0) * sin(max) + (1.0/4.0) * sin(min));
 		}
 		else {
-			return 0.5 * max + 0.5 * min;
+			return asin((sin(max) + sin(min)) / 2.0);
 		}
 	};
 
-	double a = 0.57;
+	double a = 0.539893087;
+	//double a = 0.57;
 	auto latConstFunc = [&](double max, double min, SdogCellType type) {
 		return (type == SdogCellType::SG) ? a * max + (1 - a) * min : 0.5 * max + 0.5 * min;
 	};
 
-	auto latVarFunc = [&](double max, double min, SdogCellType type) {
-		if (type == SdogCellType::NG) {
-			return asin((sin(max) + sin(min)) / 2.0);
-		}
-		else if (type == SdogCellType::SG) {
-			return 0.55 * max + 0.45 * min;
-		}
-		else {
-			return 0.5 * max + 0.5 * min;
-		}
-	};
-
-	auto radVarFunc = [&](double max, double min, SdogCellType type) {
+	auto radVolFunc = [&](double max, double min, SdogCellType type) {
 		if (type == SdogCellType::NG || type == SdogCellType::LG) {
 			return pow((max*max*max + min*min*min) / 2.0, 1.0 / 3.0);
 		}
@@ -67,9 +56,17 @@ void Program::start() {
 			return 0.5 * max + 0.5 * min;
 		}
 	};
+
+	auto latBalFunc = [&](double max, double min, SdogCellType type) {
+		return 0.5 * latVolFunc(max, min, type) + 0.5 * defFunc(max, min, type);
+	};
+
+	auto radBalFunc = [&](double max, double min, SdogCellType type) {
+		return 0.5 * radVolFunc(max, min, type) + 0.5 * defFunc(max, min, type);
+	};
 	// End functions
 
-	std::ofstream out("test.txt");
+	std::ofstream out("test3.txt");
 	if (!out.is_open()) {
 		return;
 	}
@@ -97,7 +94,7 @@ void Program::start() {
 		max[SL] = (v > max[SL]) ? v : max[SL];
 
 		if (c.getSL() < maxSL) {
-			c.sliceSubdivide(queue, defFunc, newFunc);
+			c.sliceSubdivide(queue, latVolFunc, radVolFunc);
 		}
 		count++;
 
@@ -112,7 +109,8 @@ void Program::start() {
 		meanSph[i] /= numCells[i];
 		SDVol[i] = sqrt(SDVol[i] / numCells[i]);
 		out << std::setprecision(17);
-		out << i << "::: " << max[i] / min[i] << std::endl;
+		//out << i << "::: " << max[i] / min[i] << std::endl;
+		out << i << "," << max[i] << "," << min[i] << "," << meanVol[i] << "," << meanSA[i] << "," << meanSph[i] << "," << SDVol[i] << std::endl;
 		//out << i << "," << max[i] << "," << min[i] << "," << meanVol[i] << "," << meanSA[i] << "," << meanSph[i] << "," << SDVol[i] << std::endl;
 	}
 }
